@@ -1,0 +1,35 @@
+.table-container {
+  margin: 14px 0;
+  max-height: 500px;
+  overflow-y: scroll;
+}
+
+table {
+  border: 1px solid #e0e0e0;
+  border-collapse: collapse;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  min-width: 400px;
+  border-radius: 8px;
+  margin: 0;
+}
+
+thead tr {
+  background-color: #4682B4;
+  color: #ffffff;
+  text-align: left;
+}
+
+thead th {
+  padding: 12px 15px;
+}
+
+tr td {
+  padding: 12px 15px;
+}
+
+tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
