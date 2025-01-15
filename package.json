@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://suhail23599.github.io/sasslabs/",
+  "homepage": "https://suhail23599.github.io/sasslabs",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
