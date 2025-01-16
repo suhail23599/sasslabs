@@ -1,39 +1,55 @@
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import './table-view.css'
+import Pagination from './Pagination'
 
 const TableView = () => {
   const [data, setData] = useState([])
   const [list, setList] = useState([])
+  const [totalPages , setTotalPages] = useState(0)
+  const [currentPage, setCurrentPage] = useState(0)
+  const recordsPerPage = 5
   const containerRef = useRef()
-  const [endIndex, setEndIndex] = useState(10)
-  const [startIndex, setStartIndex] = useState(0)
+  const [endIndex, setEndIndex] = useState(null)
+  const [startIndex, setStartIndex] = useState(null)
+
+  useEffect(() => {
+    getData()
+  }, [])
+
   const getData = async () => {
     const response = await fetch('https://raw.githubusercontent.com/saaslabsco/frontend-assignment/refs/heads/master/frontend-assignment.json')
     const result = await response.json()
     setData(result)
-    setList(result.slice(startIndex, endIndex))
   }
-  const handleScroll = () => {
-    const { scrollTop, scrollHeight, clientHeight } = containerRef.current
-    if (scrollTop + clientHeight  >= scrollHeight) {
-      loadMore()
+
+  useEffect(() => {
+    if (data.length > 0) {
+      const calculatedStartIndex = currentPage * recordsPerPage;
+      const calculatedEndIndex = calculatedStartIndex + recordsPerPage;
+      setTotalPages(Math.ceil(data.length / recordsPerPage))
+      setStartIndex(calculatedStartIndex)
+      setEndIndex(calculatedEndIndex)
     }
-  }
-  const loadMore = () => {
-    setStartIndex(endIndex)
-    setEndIndex(endIndex + 10)
-  }
+  }, [data])
+
   useEffect(() => {
-    setList(((prev) => {
-      const val = [...prev, ...data.slice(startIndex, endIndex)]
-      return val
-    }))
+    if (startIndex !== undefined && endIndex !== undefined) {
+      const newList = data.slice(startIndex, endIndex);
+      setList(newList)
+    }
   }, [startIndex, endIndex])
-  useEffect(() => {
-    getData()
-  }, [])
+
+  const pageChangeHandler = useCallback((page) => {
+    setCurrentPage(page)
+    const calculatedStartIndex = page * recordsPerPage;
+    const calculatedEndIndex = calculatedStartIndex + recordsPerPage;
+    setStartIndex(calculatedStartIndex)
+    setEndIndex(calculatedEndIndex)
+  })
+  
+
   return (
-    <div className="table-container" onScroll={handleScroll} ref={containerRef}>
+    <div className="table-container" ref={containerRef}>
       <table>
         <thead>
           <tr>
@@ -56,6 +72,13 @@ const TableView = () => {
         }
         </tbody>
       </table>
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        data={list}
+        onPageChange={pageChangeHandler}
+      >
+      </Pagination>
     </div>
   )
 }
